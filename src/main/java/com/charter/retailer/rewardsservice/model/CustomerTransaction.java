@@ -3,6 +3,7 @@ package com.charter.retailer.rewardsservice.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 public class CustomerTransaction {
     private String transactionId;
     private LocalDate transactionDate;
+    @NonNull
+    private long transactionAmount;
     private String customerId;
-    private String name;
 }

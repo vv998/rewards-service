@@ -9,12 +9,13 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     
-    /*@ExceptionHandler(Exception.class)
+    @ExceptionHandler(ResourceNotFoundError.class)
     public ResponseEntity<String> handleAllUncaughtException(
             Exception exception,
             WebRequest request){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    /*
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllUncaughtException(
             Exception exception,
