@@ -1,9 +1,11 @@
 package com.charter.retailer.rewardsservice.controller;
 
+import com.charter.retailer.rewardsservice.exception.ResourceNotFoundError;
 import com.charter.retailer.rewardsservice.model.Rewards;
 import com.charter.retailer.rewardsservice.service.RewardsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +19,9 @@ public class RewardsController {
     @Autowired
     private RewardsService rewardsService;
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<Rewards> getRewardByCustomer(@PathVariable String customerId){
+    @GetMapping(path= "/customer/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Rewards> getRewardByCustomer(@PathVariable String customerId)
+            throws ResourceNotFoundError {
          Rewards rewards = this.rewardsService.getRewardByCustomer(customerId);
 
          return new ResponseEntity(rewards, HttpStatus.OK);

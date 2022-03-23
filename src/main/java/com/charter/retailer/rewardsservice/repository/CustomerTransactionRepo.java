@@ -1,7 +1,6 @@
 package com.charter.retailer.rewardsservice.repository;
 
 import com.charter.retailer.rewardsservice.model.CustomerTransaction;
-import com.charter.retailer.rewardsservice.model.Rewards;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -25,6 +24,15 @@ public class CustomerTransactionRepo {
         this.transactionMap.put("custTran4", new CustomerTransaction("custTran4",
                 LocalDate.now().minusMonths(2), 150L, "cust1"));
 
+    }
+
+    public void createTransaction(CustomerTransaction transaction) {
+        this.transactionMap.put(transaction.getTransactionId(), transaction);
+    }
+
+    public boolean containsKey(String transactionId) {
+
+        return this.transactionMap.get(transactionId) != null;
     }
 
     public List<CustomerTransaction> getTransactions() {

@@ -15,11 +15,4 @@ public class GlobalExceptionHandler {
             WebRequest request){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
-    /*
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAllUncaughtException(
-            Exception exception,
-            WebRequest request){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }*/
 }

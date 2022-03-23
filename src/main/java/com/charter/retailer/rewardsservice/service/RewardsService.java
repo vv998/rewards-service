@@ -1,5 +1,6 @@
 package com.charter.retailer.rewardsservice.service;
 
+import com.charter.retailer.rewardsservice.exception.ResourceNotFoundError;
 import com.charter.retailer.rewardsservice.model.CustomerTransaction;
 import com.charter.retailer.rewardsservice.model.Rewards;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,13 @@ public class RewardsService {
     public CustomerTransactionService customerTransactionService;
 
 
-    public Rewards getRewardByCustomer(String customerId) {
+    public Rewards getRewardByCustomer(String customerId) throws ResourceNotFoundError {
 
-        this.customerTransactionService.isValidClient(customerId);
+        CustomerTransaction transaction = this.customerTransactionService.isValidClient(customerId);
 
+        if(transaction == null) {
+            throw new ResourceNotFoundError("Customer with "+ customerId + " is invalid");
+        }
         List<CustomerTransaction> transactions = this.customerTransactionService
                 .getTransactionsByCustomer(customerId);
         float totalPoints = transactions.stream()
