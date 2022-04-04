@@ -20,10 +20,6 @@ public class CustomerTransactionService {
         return customerTransaction;
     }
 
-    public boolean isTransactionExist(String transactionId) {
-        return this.transactionRepo.containsKey(transactionId);
-    }
-
     public CustomerTransaction isValidClient(String customerId) {
         return this.transactionRepo.getTransactionsByCustomer(customerId)
                 .stream().findFirst().orElse(null);

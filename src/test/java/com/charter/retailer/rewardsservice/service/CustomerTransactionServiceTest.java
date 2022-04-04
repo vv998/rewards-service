@@ -3,17 +3,23 @@ package com.charter.retailer.rewardsservice.service;
 import com.charter.retailer.rewardsservice.model.CustomerTransaction;
 import com.charter.retailer.rewardsservice.repository.CustomerTransactionRepo;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CustomerTransactionServiceTest {
 
     public static final String CUSTOMER_ID = "custId";
@@ -23,17 +29,18 @@ public class CustomerTransactionServiceTest {
     @Mock
     private CustomerTransactionRepo transactionRepo;
 
-    private CustomerTransaction transaction;
-    private List<CustomerTransaction> transactions;
+    private CustomerTransaction transaction = new CustomerTransaction("custTran5",
+            LocalDate.now().minusMonths(1), 200L, "custId");
+    private List<CustomerTransaction> transactions =
+            Arrays.asList(this.transaction);
 
-    @Before
-    public void setUp() {
-        this.transaction = new CustomerTransaction("custTran5",
-                LocalDate.now().minusMonths(1), 200L, "custId");
-        this.transactions = Arrays.asList(this.transaction);
-        MockitoAnnotations.initMocks(this);
+    @BeforeAll
+    public void init() {
+        this.transactionService = new CustomerTransactionService();
+
     }
 
+    @DisplayName("GET request for Transaction by customerId")
     @Test
     public void createTransaction() {
         Mockito.doNothing()
@@ -42,13 +49,13 @@ public class CustomerTransactionServiceTest {
 
         CustomerTransaction transaction = this.transactionService
                 .createTransaction(this.transaction);
-        Assert.assertEquals(CUSTOMER_ID, transaction.getCustomerId());
+        Assertions.assertAll("create",
+                () -> assertEquals(CUSTOMER_ID, transaction.getCustomerId())
+        );
+        Mockito.verify(this.transactionRepo).createTransaction(this.transaction);
     }
 
-    @Test
-    public void isTransactionExist() {
-    }
-
+    @DisplayName("ClientId Validation")
     @Test
     public void isValidClient() {
         Mockito.doReturn(this.transactions)
@@ -58,8 +65,11 @@ public class CustomerTransactionServiceTest {
         CustomerTransaction transaction = this.transactionService
                 .isValidClient(CUSTOMER_ID);
         Assert.assertEquals(CUSTOMER_ID, transaction.getCustomerId());
+        Mockito.verify(this.transactionRepo)
+                .getTransactionsByCustomer(CUSTOMER_ID);
     }
 
+    @DisplayName("Invalid ClientId Validation")
     @Test
     public void isValidClientWithInvalidClientId() {
         Mockito.doReturn(null)
@@ -69,8 +79,11 @@ public class CustomerTransactionServiceTest {
         CustomerTransaction transaction = this.transactionService
                 .isValidClient(CUSTOMER_ID);
         Assert.assertNull(transaction);
+        Mockito.verify(this.transactionRepo)
+                .getTransactionsByCustomer(Mockito.anyString());
     }
 
+    @DisplayName("All existing transactions")
     @Test
     public void getTransactions() {
         Mockito.doReturn(this.transactions)
@@ -79,10 +92,14 @@ public class CustomerTransactionServiceTest {
 
         List<CustomerTransaction> transactions = this.transactionService
                 .getTransactions();
-        Assert.assertEquals(1, transactions.size());
-        Assert.assertEquals(CUSTOMER_ID, transactions.get(0).getCustomerId());
+        Assertions.assertAll("transactions",
+                () -> assertEquals(1, transactions.size()),
+                () -> assertEquals(CUSTOMER_ID, transactions.get(0).getCustomerId())
+        );
+        Mockito.verify(this.transactionRepo).getTransactions();
     }
 
+    @DisplayName("Transactions by CustomerId")
     @Test
     public void getTransactionsByCustomer() {
         Mockito.doReturn(this.transactions)
@@ -93,5 +110,10 @@ public class CustomerTransactionServiceTest {
                 .getTransactionsByCustomer(CUSTOMER_ID);
         Assert.assertEquals(1, transactions.size());
         Assert.assertEquals(CUSTOMER_ID, transactions.get(0).getCustomerId());
+        Assertions.assertAll("transactions",
+                () -> assertEquals(1, transactions.size()),
+                () -> assertEquals(CUSTOMER_ID, transactions.get(0).getCustomerId())
+        );
+        Mockito.verify(this.transactionRepo).getTransactionsByCustomer(CUSTOMER_ID);
     }
 }
